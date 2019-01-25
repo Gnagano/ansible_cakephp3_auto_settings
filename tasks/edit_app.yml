@@ -1,0 +1,4 @@
+- name: edit_app 
+  template:
+    src: "app.php.j2"
+    dest: "{{ cakephp3_project_dir }}/config/app.php"
