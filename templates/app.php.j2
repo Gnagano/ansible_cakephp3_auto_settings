@@ -260,6 +260,8 @@ return [
             'username' => Configure::read('DB_USERNAME'),
             'password' => Configure::read('DB_PASSWORD'),
             'database' => Configure::read('DB_NAME'),
+            'unix_socket' => Configure::read('DB_UNIX_SOCKET'),
+
             /*
              * You do not need to set this flag to use full utf-8 encoding (internal default since CakePHP 3.6).
              */
@@ -310,6 +312,7 @@ return [
             'log' => false,
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
             'url' => env('DATABASE_TEST_URL', null),
+            'unix_socket' => Configure::read('DB_UNIX_SOCKET'),
         ],
     ],
 

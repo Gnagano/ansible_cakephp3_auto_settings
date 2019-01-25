@@ -1,0 +1,4 @@
+- name: migration / execute database migration
+  shell: 'bin/cake migrations migrate'
+  args:
+    chdir: "{{ cakephp3_project_dir }}"

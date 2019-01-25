@@ -2,6 +2,8 @@
 
 - include: edit_app.yml tags=cakephp3
 - include: composer.yml tags=cakephp3
+- include: mysql.yml tags=cakephp3
+- include: migration.yml tags=cakephp3
 
 
 #- include: composer_install.yml tags=cakephp3
