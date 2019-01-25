@@ -1,0 +1,22 @@
+---
+- name: mysql / create database
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ mysql_database      }}"
+    - "{{ mysql_test_database }}"
+
+- name: mysql / create user for database
+  mysql_user:
+    name:     "{{ mysql_user }}"
+    host:     "{{ mysql_host }}"
+    password: "{{ mysql_password }}"
+    priv:     "{{ mysql_database }}.*:ALL"
+
+- name: mysql / create user for test database
+  mysql_user:
+    name:     "{{ mysql_test_user }}"
+    host:     "{{ mysql_test_host }}"
+    password: "{{ mysql_test_password }}"
+    priv:     "{{ mysql_test_database }}.*:ALL"

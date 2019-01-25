@@ -1,0 +1,45 @@
+# copy default conf to default env
+- name: nginx / copy default to envs
+  copy:
+    src: "{{ cakephp3_nginx_conf_dir }}/default"
+    dest: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_default_env_name }}"
+
+- name: check if edit server_name
+  shell: "grep \"{{ cakephp3_nginx_server_name }}\" {{ cakephp3_nginx_conf_dir }}/{{ cakephp3_default_env_name }}"
+  register: execute_edit_server_name
+  failed_when: execute_edit_server_name.rc not in [0, 1]
+
+- name: check if edit server_name
+  shell: "grep \"fastcgi_param CAKE_ENV {{ cakephp3_default_env_name }}\" {{ cakephp3_nginx_conf_dir }}/{{ cakephp3_default_env_name }}"
+  register: execute_edit_cake_env
+  failed_when: execute_edit_cake_env.rc not in [0, 1]
+
+- name: check if edit hosts
+  shell: "grep \"{{ cakephp3_nginx_server_name }}\" /etc/hosts"
+  register: execute_edit_hosts
+  failed_when: execute_edit_hosts.rc not in [0, 1]
+
+# server name
+- name: nginx / edit server_name
+  lineinfile:
+    path: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_default_env_name }}"
+    regexp: "server_name\ localhost;"
+    line: "\ \ \ \ server_name {{ cakephp3_nginx_server_name }};"
+    state: present
+  when: execute_edit_server_name.rc == 1
+
+# CAKE_ENV
+- name: nginx / edit CAKE_ENV on default
+  lineinfile:
+    dest: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_default_env_name }}"
+    insertafter: "fastcgi_param PATH_TRANSLATED"
+    line: "\tfastcgi_param CAKE_ENV {{ cakephp3_default_env_name }};"
+  when: execute_edit_cake_env.rc == 1
+
+# hosts
+- name: nginx / add routing to hosts
+  lineinfile:
+    path: "/etc/hosts"
+    insertafter: "127.0.0.1(.+)localhost"
+    line: "127.0.0.1       {{ cakephp3_nginx_server_name }}"
+  when: execute_edit_hosts.rc == 1

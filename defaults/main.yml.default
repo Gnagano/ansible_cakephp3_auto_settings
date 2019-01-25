@@ -1,0 +1,40 @@
+---
+#basic setting
+cakephp3_project_name: 'your_project_name'
+cakephp3_app_dir: '/home/doc_root'
+cakephp3_project_dir: "{{ cakephp3_app_dir }}/{{ cakephp3_project_name }}"
+
+#php
+php_fpm_version: '7.0'
+
+#nginx
+cakephp3_webserver_app:      'nginx'
+cakephp3_nginx_conf_dir:     '/etc/nginx/sites-enabled'
+cakephp3_nginx_default_conf: "{{ cakephp3_nginx_conf_dir }}/default"
+cakephp3_nginx_server_name:  'your_server_name'
+cakephp3_nginx_service_port: 80
+
+#envornments
+cakephp3_default_env_name:   'development'
+cakephp3_test_env_name:      'test'
+
+#app.php security.salt
+cakephp3_security_salt: 'your_security_salt'
+
+#for database
+mysql_user:     'your_database_user'
+mysql_host:     'your_database_host'
+mysql_password: 'your_database_password'
+mysql_database: 'your_database_name'
+
+mysql_test_user:     "{{ mysql_user }}_test"
+mysql_test_host:     'localhost'
+mysql_test_password: 'your_test_database_password'
+mysql_test_database: "{{ mysql_database }}_test"
+
+# email settings
+cakephp3_email_host:     'your_email_host'
+cakephp3_email_port:     'your_email_port'
+cakephp3_email_address:  'your_email_address'
+cakephp3_email_password: 'your_email_password'
+

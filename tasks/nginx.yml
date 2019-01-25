@@ -1,0 +1,60 @@
+---
+
+# write cakephp3 settings on default nginx conf
+
+#Not executed if location directive has already added nginx conf
+- name: check execute nginx_conf.yml or not
+  shell: "grep '/{{ cakephp3_project_name }}/(.+' {{ cakephp3_nginx_default_conf }}"
+  register: execute_nginx_conf
+  failed_when: execute_nginx_conf.rc not in [0, 1]
+
+- include: nginx_cakephp3_settings.yml tags=cakephp3
+  when: execute_nginx_conf.rc == 1 and cakephp3_webserver_app == 'nginx'
+
+- include: nginx_default_env.yml tag=cakephp3
+
+- include: nginx_test_env.yml tag=cakephp3
+
+## copy default conf to test env
+#- name: nginx / copy default to env for test
+#  copy:
+#    src: "{{ cakephp3_nginx_conf_dir }}/default"
+#    dest: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_test_env_name }}"
+#
+## sever name
+#- name: nginx / edit server_name
+#  lineinfile:
+#    path: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_test_env_name }}"
+#    regexp: "server_name\ localhost;"
+#    line: "\ \ \ \ server_name {{ cakephp3_test_env_name }}.{{ cakephp3_nginx_server_name }};"
+#    state: present
+#
+## CAKE_ENV
+#- name: nginx / edit CAKE_ENV on test_env
+#  lineinfile:
+#    path: "{{ cakephp3_nginx_conf_dir }}/{{ cakephp3_test_env_name }}"
+#    regexp: "fastcgi_param CAKE_ENV development"
+#    line: "\tfastcgi_param CAKE_ENV {{ cakephp3_test_env_name }};"
+#    state: present
+#
+## hosts
+#- name: nginx / add routing to hosts
+#  lineinfile:
+#    path: "/etc/hosts"
+#    insertafter: "127.0.0.1(.+)localhost"
+#    line: "127.0.0.1       {{ cakephp3_test_env_name }}.{{ cakephp3_nginx_server_name }}"
+
+
+# restart nginx
+- name: nginx / nginx restart
+  systemd:
+    name: nginx
+    state: reloaded
+    enabled: yes
+
+- name: nginx / wait for nginx restart
+  wait_for:
+    host: "{{ ansible_eth1.ipv4.address }}"
+    port:  "{{ cakephp3_nginx_service_port }}"
+    delay: 3
+    timeout: 60
