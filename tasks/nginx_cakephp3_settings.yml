@@ -1,0 +1,45 @@
+- name: nginx_conf / delete end line
+  shell: "sed -i '$d' {{ cakephp3_nginx_default_conf }}"
+
+- name: nginx_conf / add cakephp3 routing info
+  blockinfile:
+    dest: "{{ cakephp3_nginx_default_conf }}"
+    marker: "# ansible auto add cakephp3 conf"
+    regexp: '}\z'
+    block: |
+
+      location ~ ^/{{ cakephp3_project_name }}/(img|css|js|files)/(.+)$ {
+           root {{ cakephp3_project_dir }}/webroot;
+           try_files /$1/$2 =404;
+       }
+
+       location ~ ^/{{ cakephp3_project_name }}/(.+\.php)$ {
+           fastcgi_pass unix:/var/run/php/php{{ php_fpm_version }}-fpm.sock;
+
+           fastcgi_index index.php;
+           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+           include fastcgi_params;
+       }
+
+       location ~ ^/{{ cakephp3_project_name }}/(.*)$ {
+           index index.php index.html;
+           try_files /{{ cakephp3_project_name }}/$1 /{{ cakephp3_project_name }}/$1/ /{{ cakephp3_project_name }}/index.php?$1&args;
+       }
+
+- name: nginx_conf / add clousure to EOF
+  lineinfile:
+    dest: "{{ cakephp3_nginx_default_conf }}"
+    line: "}"
+
+- name: nginx_conf / nginx restart
+  systemd:
+    name: nginx
+    state: reloaded
+    enabled: yes
+
+- name: nginx_conf / wait for nginx restart
+  wait_for:
+    host: "{{ ansible_eth1.ipv4.address }}"
+    port:  "{{ cakephp3_nginx_service_port }}"
+    delay: 3
+    timeout: 60
