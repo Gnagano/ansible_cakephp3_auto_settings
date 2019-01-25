@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: Gnagano
+  description: setup cakephp3 project
+  license: MIT
+  min_ansible_version: 2.7
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial # 16.04
+  galaxy_tags:
+    - ubuntu
+    - cakephp3
+    - nginx
