@@ -1,0 +1,4 @@
+- name: composer / composer update
+  shell: 'composer update'
+  args:
+    chdir: "{{ cakephp3_project_dir }}"

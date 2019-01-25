@@ -1,4 +1,4 @@
-- name: edit_app 
+- name: edit_app.yml / copy app.php.j2 to app.php
   template:
     src: "app.php.j2"
     dest: "{{ cakephp3_project_dir }}/config/app.php"
